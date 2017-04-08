@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<head><script type="text/javascript" src="/static/js/user.js"></script></head>
+<h1>SIGN UP</h1>
+      <p class="important">
+      Welcome!
+      </p>
+
+<head><script type="text/javascript" src="/static/js/user.js"></script><head>
+
+<form id="new_user" method="POST">
+username:
+<input  id="new_username_input" type="text" name="username"><br><br>
+firstname:
+<input  id="new_firstname_input" type="text" name="firstname"><br><br>
+lastname:
+<input  id="new_lastname_input" type="text" name="lastname"><br><br>
+password1:
+<input  id="new_password1_input" type="password" name="password1"><br><br>
+password2:
+<input  id="new_password2_input" type="password" name="password2"><br><br>
+email:
+<input  id="new_email_input" type="text" name="email"><br><br><br>
+<input id="new_submit" type="submit" name = "submit">
+</form>
+
+<div id="errors" class="error">
+</div>
+
+    
+{% endblock %}

@@ -1,4 +1,4 @@
-from album import *
-from albums import *
-from pic import *
 from main import *
+from restaurants import *
+from login import *
+from signup import *

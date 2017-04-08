@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<head><script type="text/javascript" src="/static/js/login.js"></script></head>
+<h1 style="color: purple">LOG IN</h1>
+<p class="important">
+    welcome, please login!
+</p>
+<script type="text/javascript" src="/static/js/login.js"></script>
+
+<form id="login" method="POST">
+	username:
+	<input  id="login_username_input" type="text" name="username"><br><br>
+	password:
+	<input  id="login_password_input" type="password" name="password"><br><br>
+	<input id="login_submit" type="submit" name="submit">
+</form>
+
+<div id="errors" class="error">
+</div>
+
+{% endblock %}
