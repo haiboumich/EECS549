@@ -1,4 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div>
+	{% for i in range(name|length) %}
+		<hr>
+		<p>{{ i+1 }}. </p>
+		<a href="restaurants/{{name[i]}}">{{name[i]}}</a>
+		<p> {{rating[i]}} {{reviewcount[i]}} {{address[i]}} {{zipcode[i]}} </p>
+		<br/>
+	{% endfor %}
+</div>
+
+<div class="pagination">
+  <a href="restaurants">&laquo;</a>
+  <a href="restaurants" class="active">1</a>
+  <a href="restaurants">2</a>
+  <a href="restaurants">3</a>
+  <a href="restaurants">4</a>
+  <a href="restaurants">5</a>
+  <a href="restaurants">6</a>
+  <a href="restaurants">7</a>
+  <a href="restaurants">8</a>
+  <a href="restaurants">9</a>
+  <a href="restaurants">10</a>
+  <a href="restaurants">11</a>
+  <a href="restaurants">12</a>
+  <a href="restaurants">13</a>
+  <a href="restaurants">14</a>
+  <a href="restaurants">15</a>
+  <a href="restaurants">16</a>
+  <a href="restaurants">17</a>
+  <a href="restaurants">18</a>
+  <a href="restaurants">19</a>
+  <a href="restaurants">20</a>
+  <a href="restaurants">&raquo;</a>
+</div>
+
 {% endblock %}
