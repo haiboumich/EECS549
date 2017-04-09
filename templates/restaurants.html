@@ -5,7 +5,7 @@
 	{% for i in range(name|length) %}
 		<hr>
 		<p>{{ i+1 }}. </p>
-		<a href="restaurants/{{name[i]}}">{{name[i]}}</a>
+		<a href="{{url_for('restaurants.restaurants_route', name=name[i]) }}">{{name[i]}}</a>
 		<p> {{rating[i]}} {{reviewcount[i]}} {{address[i]}} {{zipcode[i]}} </p>
 		<br/>
 	{% endfor %}
