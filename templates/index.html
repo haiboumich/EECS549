@@ -1,4 +1,49 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+.search {
+	position: relative;
+	top: 100px;
+	width: 100%;
+}
+select { 
+	width: 200px; 
+	height: 70px;
+}
 
+input[type=text] {
+	position: relative;
+	width: 600px; 
+	height: 70px;
+}
+
+input[type=submit] {
+	position: relative;
+	width: 100px; 
+	height: 40px;
+}
+
+.img{
+	position: relative;
+	width: 1200px;
+	height: 400px;
+}
+</style>
+
+<center><img src="/static/lasvegas.jpg" alt="Las Vegas" class=img></center>
+
+<center class="search">
+<form method="post">
+    <select name="col" class="options">
+            <option value="">Find</option>
+            <option value="name">Name</option>
+            <option value="address">Address</option>
+            <option value="zipcode">Zipcode</option>
+            <option value="rating">Rating</option>
+            <option value="reviewcount">Review Count</option>
+    </select>
+    <input type="text" name="crit" class="para" />
+    <input class="button" type="submit" value="Search">
+</form>
+</center>
 {% endblock %}

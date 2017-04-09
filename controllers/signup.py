@@ -15,7 +15,6 @@ def signup_route():
         return redirect(url_for('user.user_route'))
     
     if request.method == 'POST':
-
         username = request.form.get('username')
         firstname = request.form.get('firstname')
         lastname = request.form.get('lastname')
@@ -64,54 +63,3 @@ def signup_route():
         "method" : 'GET'     
     }
     return render_template("signup.html", **options)    
-
-    
-@signup.route('/signup/edit', methods = ['GET', 'POST'])
-def signup_edit_route():
-    if not 'username' in session:
-        return redirect(url_for('login.login_route'))
-
-    username = session['username']
-    cur7 = db.cursor()
-    cur7.execute('SELECT firstname, lastname, email FROM UserInfo WHERE username = %s', (username, ))
-    results7 = cur7.fetchall()
-    
-    if request.method == 'POST':
-        #firstname = request.form['firstname'].encode('ascii','ignore')
-        firstname = request.form.get('firstname')
-        lastname = request.form.get('lastname')
-        email = request.form.get('email')
-        password1 = request.form.get('password1')
-        password2 = request.form.get('password2')
-
-        isPassword12Mismatch = False
-
-        if not password1 == password2:
-            isPassword12Mismatch = True
-
-        if isStrLengthLessThanN(password1, 7):
-            isPassword1TooShort = True
-
-        options = {
-            "edit" : True,
-            "login": True,
-            "method" : 'POST',
-            "isPassword1TooShort": isPassword1TooShort,
-            "isPassword12Mismatch": isPassword12Mismatch,
-            "Name":results7
-        }
-        
-        if options['isPassword1TooShort'] or options['isPassword12Mismatch']:
-            return render_template("signup.html", **options)
-
-        cur1 = db.cursor()
-        cur1.execute('UPDATE UserInfo SET firstname = %s, lastname = %s, email = %s, password = %s WHERE username = %s', (firstname, lastname, email, password, username))
-        return redirect(url_for('signup.signup_edit_route'))
-
-    options = {
-        "edit" : True,
-        "login": True,
-        "method" : 'GET', 
-        "Name":results7
-    }
-    return render_template("signup.html", **options)
