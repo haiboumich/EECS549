@@ -1,4 +1,4 @@
-from flask import Flask, session, escape, request, Blueprint, render_template, jsonify, json
+from flask import Flask, session, redirect, url_for, escape, request, Blueprint, render_template
 import MySQLdb
 import MySQLdb.cursors
 from extensions import *
@@ -9,316 +9,109 @@ signup = Blueprint('signup', __name__, template_folder='templates')
 
 db = connect_to_database()
 
-@signup.route("/signup", methods = ['GET', 'POST', 'PUT'])
+@signup.route('/signup', methods = ['GET', 'POST'])
 def signup_route():
-    if request.method == "GET":
-        if 'username' in session:
-            username = session['username']
-            #print "fuck      username=", username
-            cur1 = db.cursor()
-            cur1.execute('SELECT firstname, lastname, email FROM User WHERE username = %s', (username, ))
-            results1 = cur1.fetchall()
-            firstname = ''
-            lastname = ''
-            email = ''
-            #print "fuck2      username=", username
-            for user in results1:
-                firstname = user['firstname']
-                lastname = user['lastname']
-                email = user['email']
-            #print "fuck3      username=", username
-            userDict = {
-                "username": username,
-                "firstname": firstname,
-                "lastname": lastname,
-                "email": email
-            }
-            print "fuck4      username=", username
-            return jsonify(userDict)
+    if 'username' in session:
+        return redirect(url_for('user.user_route'))
+    
+    if request.method == 'POST':
+
+        username = request.form.get('username')
+        firstname = request.form.get('firstname')
+        lastname = request.form.get('lastname')
+        password1 = request.form.get('password1')
+        password2 = request.form.get('password2')
+        email = request.form.get('email')
         
-        print "fuck      username="
-        errorDict = {
-            "errors": [
-                {
-                    "message": "You do not have the necessary credentials for the resource"
-                }
-            ]
-        }
-
-        return jsonify(errorDict), 401
-
-    elif request.method == "POST":
+        isUsernameRepeated = False
+        isPassword1TooShort = False
+        isPassword12Mismatch = False
         
-        data = request.get_json()
-
-        if len(data) < 6:
-            errorDict = {
-                "errors": [
-                    {
-                        "message": "You did not provide the necessary fields"
-                    }
-                ]
-            }
-            print "fuck !!!!!!!!!"
-
-            return jsonify(errorDict), 422
-
-        #isUsernameEmpty == True or isPassword1Empty == True or isPassword2Empty == True or isEmailEmpty == True
-        '''if username == '' or password1 == '' or password2 == '' or email == '':
-            errorDict = {
-                "errors": [
-                        {
-                            "message": "You did not provide the necessary fields"
-                        }
-                    ]
-            }
-
-            return jsonify(errorDict), 422'''
-
-        username = data['username']
-        firstname = data['firstname']
-        lastname = data['lastname']
-        password1 = data['password1']
-        password2 = data['password2']
-        email = data['email']
-            
-        errorDict = {
-            "errors": [
-
-            ]
-        }
-
-        #isUsernameRepeated == True
-        cur2 = db.cursor()
-        cur2.execute('SELECT username FROM User')
-        results2 = cur2.fetchall()
-        for res2 in results2:
-            if res2['username'] == username:
-                mesDict = {
-                    "message": "This username is taken"
-                }
-                errorDict["errors"].append(mesDict)
-
-        #isUsernameTooShort == True
-        if isStrLengthLessThanN(username, 2):
-            mesDict = {
-                "message": "Usernames must be at least 3 characters long"
-            }
-            errorDict["errors"].append(mesDict)
-
-        #isUsernameCharIllegal == True
-        if not isStrAllLDU(username):
-            mesDict = {
-                "message": "Usernames may only contain letters, digits, and underscores"
-            }
-            errorDict["errors"].append(mesDict)
-
-        #isPassword1TooShort == True
-        if isStrLengthLessThanN(password1, 7):
-            mesDict = {
-                "message": "Passwords must be at least 8 characters long"
-            }
-            errorDict["errors"].append(mesDict)
-
-        #isPassword1DigitLetterIllegal == True
-        if not ifStrHasDL(password1):
-            mesDict = {
-                "message": "Passwords must contain at least one letter and one number"
-            }
-            errorDict["errors"].append(mesDict)
-
-        #isPassword1CharIllegal == True
-        if not isStrAllLDU(password1):
-            mesDict = {
-                "message": "Passwords may only contain letters, digits, and underscores"
-            }
-            errorDict["errors"].append(mesDict)
-
-        #isPassword12Mismatch == True
+        cur1 = db.cursor()
+        cur1.execute('SELECT username FROM UserInfo')
+        result1 = cur1.fetchall()
+        for user in result1:
+            if user['username'] == username:
+                isUsernameRepeated = True
+                
         if not password1 == password2:
-            mesDict = {
-                "message": "Passwords do not match"
-            }
-            errorDict["errors"].append(mesDict)
+            isPassword12Mismatch = True
 
-        #isEmailIllegal == True
-        if not isEmailValid(email):
-            mesDict = {
-                "message": "Email address must be valid"
-            }
-            errorDict["errors"].append(mesDict)
-
-        #isUsernameTooLong == True
-        if not isStrLengthLessThanN(username, 20):
-            mesDict = {
-                "message": "Username must be no longer than 20 characters"
-            }
-            errorDict["errors"].append(mesDict)
-
-        #isFirstnameTooLong == True
-        if not isStrLengthLessThanN(firstname, 20):
-            mesDict = {
-                "message": "Firstname must be no longer than 20 characters"
-            }
-            errorDict["errors"].append(mesDict)
-
-        #isLastnameTooLong == True
-        if not isStrLengthLessThanN(lastname, 20):
-            mesDict = {
-                "message": "Lastname must be no longer than 20 characters"
-            }
-            errorDict["errors"].append(mesDict)
+        if isStrLengthLessThanN(password1, 7):
+            isPassword1TooShort = True
         
-        #isEmailTooLong == True
-        if not isStrLengthLessThanN(email, 40):
-            mesDict = {
-                "message": "Email must be no longer than 40 characters"
-            }
-            errorDict["errors"].append(mesDict)
-        
-        if not len(errorDict["errors"]) == 0:
-            return jsonify(errorDict), 422
+        options = {
+            "edit" :False,
+            "method" :'POST',
+            "isUsernameRepeated": isUsernameRepeated,
+            "isPassword1TooShort": isPassword1TooShort,
+            "isPassword12Mismatch": isPassword12Mismatch
+        }
+        for key in options:
+            if options[key] == True:
+                return render_template("signup.html", **options)
         
         hashPassword = hash.hashPassword(password1)
         
-        cur3 = db.cursor()
-        add_user = ("INSERT INTO User (username, firstname, lastname, password, email) VALUES (%s, %s, %s, %s, %s)")
+        cur2 = db.cursor()
+        add_user = ("INSERT INTO UserInfo (username, firstname, lastname, password, email) VALUES (%s, %s, %s, %s, %s)")
         data_user = (username, firstname, lastname, hashPassword, email)
-        cur3.execute(add_user, data_user)
+        cur2.execute(add_user, data_user)
+        return redirect(url_for('login.login_route'))
+    
+    options = {
+        "edit" : False,
+        "method" : 'GET'     
+    }
+    return render_template("signup.html", **options)    
 
-        cur4 = db.cursor()
-        cur4.execute("SELECT albumid FROM Album WHERE access = 'public'")
-        results4 = cur4.fetchall()
+    
+@signup.route('/signup/edit', methods = ['GET', 'POST'])
+def signup_edit_route():
+    if not 'username' in session:
+        return redirect(url_for('login.login_route'))
 
-        for album in results4:
-            cur5 = db.cursor()
-            add_access = ("INSERT INTO AlbumAccess (albumid, username) VALUES (%s, %s)")
-            data_access = (album['albumid'], username)
-            cur5.execute(add_access, data_access)
+    username = session['username']
+    cur7 = db.cursor()
+    cur7.execute('SELECT firstname, lastname, email FROM UserInfo WHERE username = %s', (username, ))
+    results7 = cur7.fetchall()
+    
+    if request.method == 'POST':
+        #firstname = request.form['firstname'].encode('ascii','ignore')
+        firstname = request.form.get('firstname')
+        lastname = request.form.get('lastname')
+        email = request.form.get('email')
+        password1 = request.form.get('password1')
+        password2 = request.form.get('password2')
 
-        userDict = {
-                "username": username,
-                "firstname": firstname,
-                "lastname": lastname,
-                "email": email
+        isPassword12Mismatch = False
+
+        if not password1 == password2:
+            isPassword12Mismatch = True
+
+        if isStrLengthLessThanN(password1, 7):
+            isPassword1TooShort = True
+
+        options = {
+            "edit" : True,
+            "login": True,
+            "method" : 'POST',
+            "isPassword1TooShort": isPassword1TooShort,
+            "isPassword12Mismatch": isPassword12Mismatch,
+            "Name":results7
         }
+        
+        if options['isPassword1TooShort'] or options['isPassword12Mismatch']:
+            return render_template("signup.html", **options)
 
-        return jsonify(userDict), 201
+        cur1 = db.cursor()
+        cur1.execute('UPDATE UserInfo SET firstname = %s, lastname = %s, email = %s, password = %s WHERE username = %s', (firstname, lastname, email, password, username))
+        return redirect(url_for('signup.signup_edit_route'))
 
-    elif request.method == "PUT":
-        if 'username' in session:
-            data = request.get_json()
-            username = data['username']
-            firstname = data['firstname']
-            lastname = data['lastname']
-            password1 = data['password1']
-            password2 = data['password2']
-            email = data['email']
-
-            if not username == session['username']:
-                errorDict = {
-                    "errors": [
-                        {
-                            "message": "You do not have the necessary permissions for the resource"
-                        }
-                    ]
-                }
-
-                return jsonify(errorDict), 403
-
-            errorDict = {
-                "errors": [
-
-                ]
-            }
-
-            #isEmailIllegal == True
-            if not isEmailValid(email):
-                mesDict = {
-                    "message": "Email address must be valid"
-                }
-                errorDict["errors"].append(mesDict)
-
-            #isFirstnameTooLong == True
-            if not isStrLengthLessThanN(firstname, 20):
-                mesDict = {
-                    "message": "Firstname must be no longer than 20 characters"
-                }
-                errorDict["errors"].append(mesDict)
-
-            #isLastnameTooLong == True
-            if not isStrLengthLessThanN(lastname, 20):
-                mesDict = {
-                    "message": "Lastname must be no longer than 20 characters"
-                }
-                errorDict["errors"].append(mesDict)
-            
-            #isEmailTooLong == True
-            if not isStrLengthLessThanN(email, 40):
-                mesDict = {
-                    "message": "Email must be no longer than 40 characters"
-                }
-                errorDict["errors"].append(mesDict)
-
-            if password1 == '' and password2 == '':
-                if not len(errorDict["errors"]) == 0:
-                    return jsonify(errorDict), 422 
-                else:
-                    cur6 = db.cursor()
-                    cur6.execute('UPDATE User SET firstname = %s, lastname = %s, email = %s WHERE username = %s', (firstname, lastname, email, username))
-            else:
-                #isPassword1TooShort == True
-                if isStrLengthLessThanN(password1, 7):
-                    mesDict = {
-                        "message": "Passwords must be at least 8 characters long"
-                    }
-                    errorDict["errors"].append(mesDict)
-
-                #isPassword1DigitLetterIllegal == True
-                if not ifStrHasDL(password1):
-                    mesDict = {
-                        "message": "Passwords must contain at least one letter and one number"
-                    }
-                    errorDict["errors"].append(mesDict)
-
-                #isPassword1CharIllegal == True
-                if not isStrAllLDU(password1):
-                    mesDict = {
-                        "message": "Passwords may only contain letters, digits, and underscores"
-                    }
-                    errorDict["errors"].append(mesDict)
-
-                #isPassword12Mismatch == True
-                if not password1 == password2:
-                    mesDict = {
-                        "message": "Passwords do not match"
-                    }
-                    errorDict["errors"].append(mesDict)
-
-                if not len(errorDict["errors"]) == 0:
-                    return jsonify(errorDict), 422
-                    
-                else: 
-                    hashPassword = hash.hashPassword(password1)
-
-                    cur7 = db.cursor()
-                    cur7.execute('UPDATE User SET firstname = %s, lastname = %s, password = %s, email = %s WHERE username = %s', (firstname, lastname, hashPassword, email, username))
-
-            userDict = {
-                    "username": username,
-                    "firstname": firstname,
-                    "lastname": lastname,
-                    "email": email
-            }
-
-            return jsonify(userDict), 201
-
-        errorDict = {
-            "errors": [
-                {
-                    "message": "You do not have the necessary credentials for the resource"
-                }
-            ]
-        }
-
-        return jsonify(errorDict), 401
+    options = {
+        "edit" : True,
+        "login": True,
+        "method" : 'GET', 
+        "Name":results7
+    }
+    return render_template("signup.html", **options)

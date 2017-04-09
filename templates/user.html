@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+	label {
+		position:relative;
+		left: 220px;
+	    font-family: Georgia, "Times New Roman", Times, serif;
+	    font-size: 18px;
+	    color: #333;
+	    height: 20px;
+	    width: 200px;
+	    margin-top: 10px;
+	    margin-left: 10px;
+	    text-align: right;
+	    clear: both;
+	    float:left;
+	    margin-right:15px;
+	    top: 150px
+	}
+
+	input[type=text], input[type=password] {
+		position:relative;
+	    width: 50%;
+	    padding: 12px 20px;
+	    margin: 0 auto;
+	    border: 1px solid #ccc;
+	    box-sizing: border-box;
+	    background-color: #3CBC8D;
+	    display: block;
+	    float: left;
+	    left: 280px;
+	    top: 150px;
+	}
+
+	button.editinfo {
+		position:relative;
+	    background-color: #4CAF50;
+	    color: white;
+	    padding: 14px 20px;
+	    margin: 8px 0;
+	    border: none;
+	    cursor: pointer;
+	    width: 60%;
+	    left: 340px;
+	    top: 200px;
+	}
+
+	button.gotoedit {
+		position:relative;
+	    background-color: #4CAF50;
+	    color: white;
+	    padding: 14px 20px;
+	    margin: 8px 0;
+	    border: none;
+	    cursor: pointer;
+	    width: 8%;
+	    float: right;
+	    top: -60px;
+	}
+
+	button:hover {
+    	opacity: 0.8;
+	}
+
+	.edit {
+		color: #FFC433;
+		position:relative;
+		left: 350px;
+	}
+
+	.error {
+		color: orange;
+		top: 300px;
+	}
+
+</style>
+
+{% if edit %}
+<h1 class="edit"> Edit Info </h1>
+    {% for name in Name %}
+		<form method="post">
+			<label><b>firstname:{{name['firstname']}}</b></label>
+		    <input  id="update_firstname_input" type="text" name="firstname"><br><br>
+
+			<label><b>lastname:{{name['lastname']}}</b></label>
+	        <input  id="update_lastname_input" type="text" name="lastname"><br><br>
+		
+			<label><b>email:{{name['email']}}</b></label>
+		    <input  id="update_email_input" type="text" name="email"><br><br>
+		
+	        <label><b>password1:</b></label>
+		    <input  id="update_password1_input" type="password" name="password1"><br><br>
+
+		    <label><b>password2:</b></label>
+		    <input  id="update_password2_input" type="password" name="password2"><br><br>
+		    
+		    <button class="editinfo" type="submit">Edit Info</button>
+	    </form>
+    {% endfor %}
+
+    {% if isUsernameRepeated %}
+		<p class="error"> The username has been used </p>
+	{% endif %}
+
+	{% if isPassword1TooShort %}
+		<p class="error"> The password is too short </p>
+	{% endif %}
+
+	{% if isPassword12Mismatch %}
+		<p class="error"> The password1 does not match the password2 </p> 
+	{% endif %}
+
+{% else %}
+<p> favorate restaurants </p>
+<form action="{{url_for('user.user_edit_route')}}">
+    <button class="gotoedit" type="submit">Edit Info</button>
+</form>
+
+{% endif %}
+
+{% endblock %}

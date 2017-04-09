@@ -3,6 +3,6 @@ env = dict(
 	port = 3000,
 	user = 'root', 
 	password = 'root',
-	db = 'yuant',
+	db = 'eecs549',
 	UPLOAD_FOLDER = '/static/images/images/'
 )
