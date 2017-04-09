@@ -1,4 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-
+<div>
+	{% for i in range(name|length) %}
+		<p>{{name[i]}} {{rating[i]}} {{reviewcount[i]}} {{address[i]}} {{zipcode[i]}} </p>
+		<br/>
+	{% endfor %}
+</div>
 {% endblock %}

@@ -14,7 +14,8 @@ with open(inputFileName, 'r') as inputFile:
 
 	data = []
 	for item in json_decode:
-		if item.get('city') == 'Las Vegas':
+
+		if item.get('city') == 'Las Vegas' and item.get('categories') and 'Restaurants' in item.get('categories'):
 			data.append(item)
 
 	with open(outputFileName, 'w') as outputFile:
