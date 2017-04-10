@@ -1,3 +1,5 @@
+from sklearn.feature_extraction.text import TfidfVectorizer
+from numpy import array, dot
 from flask import *
 from extensions import connect_to_database
 from flask import url_for
@@ -24,6 +26,7 @@ def restaurants_route():
 			postal_code = []
 			stars = []
 			review_count = []
+			general = True
 			for item in lines:
 				name.append(item.get('name'))
 				address.append(item.get('address'))
@@ -36,6 +39,7 @@ def restaurants_route():
 			print('items in file:')
 			print(i)
 			options = {
+				"general": general,
 				"name": name,
 				"address": address,
 				"zipcode": postal_code,
@@ -43,7 +47,61 @@ def restaurants_route():
 				"reviewcount": review_count,
 			}
 			return render_template("restaurants.html", **options)
+	else:
+		name = request.args.get('name')
+		with open('/vagrant/EECS549/business_LV.json', 'r') as inputFile:
+			json_decode = json.load(inputFile)
+			businessid = ''
+			neighborhood = ''
+			address = ''
+			city = ''
+			state = ''
+			zipcode = ''
+			latitude = ''
+			longitude = ''
+			rating = ''
+			reviewcount = ''
+			isopen = ''
+			attributes = ''
+			categories = ''
+			hours = ''
+			general = False
+			for item in json_decode:
+				if item.get('name') == name:
+					businessid = item.get('business_id')
+					neighborhood = item.get('neighborhood')
+					address = item.get('address')
+					city = item.get('city')
+					state = item.get('state')
+					zipcode = item.get('postal_code')
+					latitude = item.get('latitude')
+					longitude = item.get('longitude')
+					rating = item.get('stars')
+					reviewcount = item.get('review_count')
+					isopen = item.get('is_open')
+					attributes = item.get('attributes')
+					categories = item.get('categories')
+					hours = item.get('hours')
+			print(name)
+			print(address)
 
-	name = request.args.get('name')
-	
-	return render_template("restaurants.html")
+			options = {
+				"general": general,
+				"name": name,
+				"businessid": businessid,
+				"neighborhood": neighborhood,
+				"address": address,
+				"city": city,
+				"state": state,
+				"zipcode": zipcode,
+				"latitude": latitude,
+				"longitude": longitude,
+				"rating": rating,
+				"reviewcount": reviewcount,
+				"isopen": isopen,
+				"attributes": attributes,
+				"categories": categories,
+				"hours": hours
+			}
+		
+			return render_template("restaurants.html", **options)
