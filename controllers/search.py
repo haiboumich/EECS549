@@ -6,16 +6,16 @@ import json
 
 search = Blueprint('search', __name__, template_folder = 'templates')
 
-name_mat = extensions.get_name_mat()
-address_mat = extensions.get_address_mat()
+# name_mat = extensions.get_name_mat()
+# address_mat = extensions.get_address_mat()
 
 @search.route('/search', methods = ['GET', 'POST'])
 def search_route():
 	select = request.form.get('col')
 	if select == "name":
-		
+		return render_template("search.html")
 	elif select == "address":
-
+		return render_template("search.html")
 	elif select == "zipcode":
 		with open('/vagrant/EECS549/business_LV.json', 'r') as inputFile:
 			json_decode = json.load(inputFile)
