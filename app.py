@@ -12,6 +12,7 @@ app.register_blueprint(controllers.restaurants)
 app.register_blueprint(controllers.login)
 app.register_blueprint(controllers.signup)
 app.register_blueprint(controllers.user)
+app.register_blueprint(controllers.search)
 
 app.secret_key = 'some secret key'
 # Listen on external IPs
