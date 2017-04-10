@@ -1,5 +1,94 @@
 {% extends "base.html" %}
 {% block content %}
-<!-- 目前传过来的是根据zipcode, rating或者reviewcount给的一个list, 用outofrange来判断是否存在输入对应的信息 -->
+<style>
+  .ratings {
+  position: relative;
+  vertical-align: middle;
+  display: inline-block;
+  color: #b1b1b1;
+  overflow: hidden;
+	}
+
+	.full-stars{
+	  position: absolute;
+	  left: 0;
+	  top: 0;
+	  white-space: nowrap;
+	  overflow: hidden;
+	  color: #fde16d;
+	}
+
+	.empty-stars:before,
+	.full-stars:before {
+	  content: "\2605\2605\2605\2605\2605";
+	  font-size: 14pt;
+	}
+
+	.empty-stars:before {
+	  -webkit-text-stroke: 1px #848484;
+	}
+
+	.full-stars:before {
+	  -webkit-text-stroke: 1px orange;
+	}
+
+	.search {
+	position: relative;
+	top: 100px;
+	width: 100%;
+	}
+
+	select { 
+		width: 200px; 
+		height: 70px;
+	}
+
+	input[type=text] {
+		position: relative;
+		width: 600px; 
+		height: 70px;
+	}
+
+	input[type=submit] {
+		position: relative;
+		width: 100px; 
+		height: 40px;
+	}
+
+</style>
+
+{% if outofrange %}
+	<center class="search">
+		<form method="post", action="{{url_for('search.search_route')}}">
+		    <select name="sort" class="options">
+		            <option value="">Find</option>
+		            <option value="name">Name</option>
+		            <option value="address">Address</option>
+		            <option value="zipcode">Zipcode</option>
+		            <option value="rating">Rating</option>
+		            <option value="reviewcount">Review Count</option>
+		    </select>
+		    <input type="text" name="data" class="para" />
+		    <input class="button" type="submit" value="Search" />
+		</form>
+	<br><br>
+	<p><font size="3" face="verdana"> No Results for {{select}} {{value}}</font></p><br>
+	</center>
+	{% else %}
+	{% for i in range(name|length) %}
+  		<hr>
+  		<p>{{ i+1 }}. </p>
+  		<a href="{{url_for('restaurants.restaurants_route', name=name[i]) }}"> {{name[i]}} </a> <br>
+      <div class="ratings">
+        <div class="empty-stars"></div>
+        <div class="full-stars" style="width:calc(({{rating[i]}}|int())/5*100%)"></div>
+      </div>
+  		<p> &nbsp {{reviewcount[i]}} reviews </p><br>
+      {% if address[i] %}
+        <p> {{address[i]}} </p><br>
+      {% endif %}
+      <p> {{city[i]}} {{state[i]}}, {{zipcode[i]}} </p><br>
+  	{% endfor %}
+{% endif %}
 
 {% endblock %}

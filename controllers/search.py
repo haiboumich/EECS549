@@ -11,24 +11,27 @@ search = Blueprint('search', __name__, template_folder = 'templates')
 
 @search.route('/search', methods = ['GET', 'POST'])
 def search_route():
-	select = request.form.get('col')
+	select = request.form.get('sort')
 	if select == "name":
 		return render_template("search.html")
 	elif select == "address":
 		return render_template("search.html")
+
 	elif select == "zipcode":
 		with open('/vagrant/EECS549/business_LV.json', 'r') as inputFile:
 			json_decode = json.load(inputFile)
 			list = []
 			for item in json_decode:
-				if select == item.get('postal_code'):
+				if request.form.get('data') == item.get('postal_code'):
 					list.append(item)
 			list = sorted(list, key=lambda k: k['stars'], reverse=True)
 			
 			if len(list) == 0:
-				outofrange = False
+				outofrange = True
 				options = {
 					"outofrange": outofrange,
+					"select": select,
+					"value": request.form.get('data')
 				}
 				return render_template("search.html", **options)
 			else:
@@ -38,13 +41,17 @@ def search_route():
 				postal_code = []
 				stars = []
 				review_count = []
-				outofrange = True
-				for item in lines:
+				outofrange = False
+				city = []
+				state = []
+				for item in list:
 					name.append(item.get('name'))
 					address.append(item.get('address'))
 					postal_code.append(item.get('postal_code'))
 					stars.append(item.get('stars'))
 					review_count.append(item.get('review_count'))
+					city.append(item.get('city'))
+					state.append(item.get('state'))
 					i += 1
 					if i == min(200, len(list)):
 						break
@@ -55,20 +62,26 @@ def search_route():
 					"zipcode": postal_code,
 					"rating": stars,
 					"reviewcount": review_count,
+					"city": city,
+					"state": state
 				}
 				return render_template("search.html", **options)
+
 	elif select == "rating":
 		with open('/vagrant/EECS549/business_LV.json', 'r') as inputFile:
 			json_decode = json.load(inputFile)
 			list = []
 			for item in json_decode:
-				if select == item.get('stars'):
+				if float(request.form.get('data')) == float(item.get('stars')):
 					list.append(item)
+			list = sorted(list, key=lambda k: k['review_count'], reverse=True)
 			
 			if len(list) == 0:
-				outofrange = False
+				outofrange = True
 				options = {
 					"outofrange": outofrange,
+					"select": select,
+					"value": request.form.get('data')
 				}
 				return render_template("search.html", **options)
 			else:
@@ -78,13 +91,17 @@ def search_route():
 				postal_code = []
 				stars = []
 				review_count = []
-				outofrange = True
-				for item in lines:
+				outofrange = False
+				city = []
+				state = []
+				for item in list:
 					name.append(item.get('name'))
 					address.append(item.get('address'))
 					postal_code.append(item.get('postal_code'))
 					stars.append(item.get('stars'))
 					review_count.append(item.get('review_count'))
+					city.append(item.get('city'))
+					state.append(item.get('state'))
 					i += 1
 					if i == min(200, len(list)):
 						break
@@ -95,21 +112,26 @@ def search_route():
 					"zipcode": postal_code,
 					"rating": stars,
 					"reviewcount": review_count,
+					"city": city,
+					"state": state
 				}
 				return render_template("search.html", **options)
-	elif select == "reviewcount"
+
+	elif select == "reviewcount":
 		with open('/vagrant/EECS549/business_LV.json', 'r') as inputFile:
 			json_decode = json.load(inputFile)
 			list = []
 			for item in json_decode:
-				if select == item.get('review_count'):
+				if abs(int(request.form.get('data')) - int(item.get('review_count'))) < 15:
 					list.append(item)
 			list = sorted(list, key=lambda k: k['stars'], reverse=True)
 			
 			if len(list) == 0:
-				outofrange = False
+				outofrange = True
 				options = {
 					"outofrange": outofrange,
+					"select": select,
+					"value": request.form.get('data')
 				}
 				return render_template("search.html", **options)
 			else:
@@ -119,13 +141,17 @@ def search_route():
 				postal_code = []
 				stars = []
 				review_count = []
-				outofrange = True
-				for item in lines:
+				outofrange = False
+				city = []
+				state = []
+				for item in list:
 					name.append(item.get('name'))
 					address.append(item.get('address'))
 					postal_code.append(item.get('postal_code'))
 					stars.append(item.get('stars'))
 					review_count.append(item.get('review_count'))
+					city.append(item.get('city'))
+					state.append(item.get('state'))
 					i += 1
 					if i == min(200, len(list)):
 						break
@@ -136,5 +162,7 @@ def search_route():
 					"zipcode": postal_code,
 					"rating": stars,
 					"reviewcount": review_count,
+					"city": city,
+					"state": state
 				}
 				return render_template("search.html", **options)

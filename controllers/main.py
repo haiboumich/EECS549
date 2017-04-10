@@ -25,5 +25,4 @@ def main_route():
         }
         #print login
         return render_template("index.html", **options)
-    else:
-        return render_template("index.html")
+    return render_template("index.html")

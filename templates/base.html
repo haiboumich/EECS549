@@ -36,6 +36,12 @@
 
         li.navbar a:hover { background-color: darkorange; color: black; }
 
+        li.navbar2 { float: right; }
+
+        li.navbar2 a { display: block; color: dimgrey; text-align: center; padding: 14px 16px; text-decoration: none; }
+
+        li.navbar2 a:hover { background-color: darkorange; color: black; }
+
         p + ul { margin-top: 0px; }
 
         table{ border-collapse:collapse; border:1px solid; }
@@ -60,17 +66,18 @@
   <ul class="navbar">
         <li class="navbar"><a href="{{url_for('main.main_route')}}"><b>Home</b></a></li>
         <li class="navbar"><a href="{{url_for('restaurants.restaurants_route')}}"><b>Restaurants</b></a></li>
-        <li class="navbar"><a href="{{url_for('login.login_route')}}"><b>Login</b></a></li>
-        <li class="navbar"><a href="{{url_for('signup.signup_route')}}"><b>Signup</b></a></li>
+        <li class="navbar2"><a href="{{url_for('login.login_route')}}"><b>Log In</b></a></li>
+        <li class="navbar2"><a href="{{url_for('signup.signup_route')}}"><b>Signup</b></a></li>
         {% if 'username' in session %}
-            <li class="navbar"><a href="{{url_for('user.user_route')}}"><b>{{username}}</b></a></li>
+            <li class="navbar2"><a href="{{url_for('user.user_route')}}"><b>{{username}}</b></a></li>
+            <li class="navbar2"><a href="{{url_for('logout.logout_route')}}"><b>Log Out</b></a></li>
         {% endif %}
    </ul>
 
 
     <h1 class="header">Las Vegas Restaurants</h1>
 
-    <footer> Yuan Tian, Haibo Shen</footer>
+    <!--<footer> Yuan Tian, Haibo Shen</footer>-->
     {% block content %}{% endblock %}
 </body>
 </html>

@@ -1,13 +1,53 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+  .ratings {
+  position: relative;
+  vertical-align: middle;
+  display: inline-block;
+  color: #b1b1b1;
+  overflow: hidden;
+}
+
+.full-stars{
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #fde16d;
+}
+
+.empty-stars:before,
+.full-stars:before {
+  content: "\2605\2605\2605\2605\2605";
+  font-size: 14pt;
+}
+
+.empty-stars:before {
+  -webkit-text-stroke: 1px #848484;
+}
+
+.full-stars:before {
+  -webkit-text-stroke: 1px orange;
+}
+</style>
+
 {% if general %}
   <div>
   	{% for i in range(name|length) %}
   		<hr>
   		<p>{{ i+1 }}. </p>
-  		<a href="{{url_for('restaurants.restaurants_route', name=name[i]) }}">{{name[i]}}</a>
-  		<p> {{rating[i]}} {{reviewcount[i]}} {{address[i]}} {{zipcode[i]}} </p>
-  		<br/>
+  		<a href="{{url_for('restaurants.restaurants_route', name=name[i]) }}"> {{name[i]}} </a> <br>
+      <div class="ratings">
+        <div class="empty-stars"></div>
+        <div class="full-stars" style="width:calc(({{rating[i]}}|int())/5*100%)"></div>
+      </div>
+  		<p> &nbsp {{reviewcount[i]}} reviews </p><br>
+      {% if address[i] %}
+        <p> {{address[i]}} </p><br>
+      {% endif %}
+      <p> {{city[i]}} {{state[i]}}, {{zipcode[i]}} </p><br>
   	{% endfor %}
   </div>
 
@@ -36,21 +76,62 @@
     <a href="restaurants">&raquo;</a>
   </div>
 {% else %}
-  The name is {{name}} <br>
-  The businessid is {{businessid}} <br>
-  The neighborhood is {{neighborhood}} <br>
-  The address is {{address}} <br>
-  The city is {{city}} <br>
-  The state is {{state}} <br>
-  The zipcode is {{zipcode}} <br>
-  The latitude is {{latitude}} <br>
-  The longitude is {{longitude}} <br>
-  The rating is {{rating}} <br>
-  The reviewcount {{reviewcount}} <br>
-  The isopen is {{isopen}} <br>
-  The attributes are {{attributes}} <br>
-  The categories are {{categories}} <br>
-  The hours are {{hours}} <br>
-{% endif %}
+  <p><font size="5" face="verdana"> {{name}} </p><br>
 
+  <div class="ratings">
+    <div class="empty-stars"></div>
+    <div class="full-stars" style="width:calc(({{rating}}|int())/5*100%)"></div>
+  </div>
+  <p><font size="3" face="verdana"> {{rating}} &nbsp {{reviewcount}} reviews </p><br>
+
+  {% if isopen %}
+    <p><font size="2" face="verdana" color="green"> OPEN NOW </font></p><br>
+  {% else %}
+    <p><font size="2" face="verdana" color="red"> CLOSED </font></p><br>
+  {% endif %}
+  <br>
+
+  {% for category in categories if category != "Restaurants" %}
+    <p><font size="3" face="verdana"> {{category}} </font></p>
+    {% if not loop.last %} 
+      <p><font size="3" face="verdana"> , </font></p>
+    {% endif %}
+  {% endfor %}
+  <br><br>
+
+  {% if neighborhood %}
+    <p><font size="3" face="verdana"> neighborhood: {{neighborhood}} </font></p><br>
+  {% endif %}
+
+  {% if address %}
+    <p><font size="3" face="verdana"> {{address}} </font></p><br>
+  {% endif %}
+
+  {% if city %}
+    <p><font size="3" face="verdana"> {{city}}, </font></p>
+  {% endif %}
+  {% if state %}
+    <p><font size="3" face="verdana"> {{state}} </font></p>
+  {% endif %}
+  {% if zipcode %}
+    <p><font size="3" face="verdana"> {{zipcode}} </font></p><br><br>
+  {% endif %}
+  
+  {% if hours %}
+    <p><font size="4" face="verdana" color="red"> Hours </font></p><br>
+    {% for day in hours %}
+      {% set list = day.split() %}
+         {{list[0]}}, {{list[1]}} <br>
+    {% endfor %}
+  {% endif %}
+  <br>
+
+  <form method="post">
+    <button type="submit">Favourite</button>
+  </form>
+
+  {% if favourite %}
+    <p><font size="2" face="verdana"> save! </font></p><br><br>
+  {% endif %}
+{% endif %}
 {% endblock %}

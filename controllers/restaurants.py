@@ -7,7 +7,7 @@ import json
 
 restaurants = Blueprint('restaurants', __name__, template_folder='templates')
 
-# db = connect_to_database()
+db = connect_to_database()
 
 @restaurants.route('/restaurants', methods = ['GET', 'POST'])
 def restaurants_route():
@@ -27,12 +27,16 @@ def restaurants_route():
 			stars = []
 			review_count = []
 			general = True
+			city = []
+			state = []
 			for item in lines:
 				name.append(item.get('name'))
 				address.append(item.get('address'))
 				postal_code.append(item.get('postal_code'))
 				stars.append(item.get('stars'))
 				review_count.append(item.get('review_count'))
+				city.append(item.get('city'))
+				state.append(item.get('state'))
 				i += 1
 				if i == 200:
 					break
@@ -45,10 +49,27 @@ def restaurants_route():
 				"zipcode": postal_code,
 				"rating": stars,
 				"reviewcount": review_count,
+				"city": city,
+				"state": state
 			}
 			return render_template("restaurants.html", **options)
 	else:
 		name = request.args.get('name')
+
+		favourite = False
+		if request.method == 'POST':
+			if not 'username' in session:
+				return redirect(url_for('login.login_route'))
+
+			username = session['username']
+			cur1 = db.cursor()
+			cur1.execute('SELECT favourites FROM UserInfo WHERE username = %s', (username, )) 
+    		results1 = cur1.fetchall()
+    		new_favourites = results1[0] + ',' + name
+    		cur2 = db.cursor()
+        	cur2.execute("UPDATE UserInfo SET favourites = %s WHERE username = %s",(new_favourites,username))
+        	favourite = True 
+
 		with open('/vagrant/EECS549/business_LV.json', 'r') as inputFile:
 			json_decode = json.load(inputFile)
 			businessid = ''
@@ -101,7 +122,8 @@ def restaurants_route():
 				"isopen": isopen,
 				"attributes": attributes,
 				"categories": categories,
-				"hours": hours
+				"hours": hours,
+				"favourite": favourite
 			}
 		
 			return render_template("restaurants.html", **options)

@@ -33,7 +33,7 @@ input[type=submit] {
 <center><img src="/static/lasvegas.jpg" alt="Las Vegas" class=img></center>
 
 <center class="search">
-<form method="post">
+<form method="post", action="{{url_for('search.search_route')}}">
     <select name="sort" class="options">
             <option value="">Find</option>
             <option value="name">Name</option>
@@ -42,7 +42,7 @@ input[type=submit] {
             <option value="rating">Rating</option>
             <option value="reviewcount">Review Count</option>
     </select>
-    <input type="text" name="crit" class="para" />
+    <input type="text" name="data" class="para" />
     <input class="button" type="submit" value="Search" />
 </form>
 </center>

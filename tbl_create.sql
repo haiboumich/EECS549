@@ -4,5 +4,6 @@ CREATE TABLE UserInfo (
 	lastname VARCHAR(20),
 	password VARCHAR(256),
 	email VARCHAR(40),
+	favourites VARCHAR(1000),
 	PRIMARY KEY (username)
 );
