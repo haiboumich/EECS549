@@ -31,14 +31,14 @@ def search_route():
 			score = smp.cosine_similarity(name_mat, name_vectorizer.transform([request.form.get('data')]))
 			index = sorted(range(len(score)), key = lambda k:result[k], reverse = True)
 			if score[index[0]] == 0:
-				notfound = True
+				outofrange = True
 				options = {
-					"notfound": notfound,
+					"outofrange": outofrange,
 					"select": select,
 					"value": request.form.get('data')
 				}
 				return render_template("search.html", **options)
-			notfound = False
+			outofrange = False
 			i = 0
 			name = []
 			address = []
@@ -62,7 +62,7 @@ def search_route():
 					if i == 200:
 						break
 			options = {
-				"notfound": notfound,
+				"outofrange": outofrange,
 				"name": name,
 				"address": address,
 				"zipcode": postal_code,
@@ -78,14 +78,14 @@ def search_route():
 			score = smp.cosine_similarity(address_mat, address_vectorizer.transform([request.form.get('data')]))
 			index = sorted(range(len(score)), key = lambda k:result[k], reverse = True)
 			if score[index[0]] == 0:
-				notfound = True
+				outofrange = True
 				options = {
-					"notfound": notfound,
+					"outofrange": outofrange,
 					"select": select,
 					"value": request.form.get('data')
 				}
 				return render_template("search.html", **options)
-			notfound = False
+			outofrange = False
 			i = 0
 			name = []
 			address = []
@@ -109,7 +109,7 @@ def search_route():
 					if i == 200:
 						break
 			options = {
-				"notfound": notfound,
+				"outofrange": outofrange,
 				"name": name,
 				"address": address,
 				"zipcode": postal_code,
