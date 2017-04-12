@@ -67,9 +67,24 @@ def user_route():
 				if len(temp) == 0:
 					continue
 				elif len(temp) == 1:
-					recommend.append(temp[0])
+					exist = 0
+					for item in recommend:
+						if item.get('name') == temp[0].get('name'):
+							exist = 1
+					if exist != 1:
+						recommend.append(temp[0])
 				else:
+					exist = 0
+					for item in recommend:
+						if item.get('name') == temp[0].get('name'):
+							exist = 1
+					if exist != 1:
 					recommend.append(temp[0])
+					exist = 0
+					for item in recommend:
+						if item.get('name') == temp[1].get('name'):
+							exist = 1
+					if exist != 1:
 					recommend.append(temp[1])
 			for item in recommend:
 				name_rec.append(item.get('name'))
@@ -79,7 +94,6 @@ def user_route():
 				review_count_rec.append(item.get('review_count'))
 				city_rec.append(item.get('city'))
 				state_rec.append(item.get('state'))
-			recommend = list(set(recommend))
 				
 
 		options = {
