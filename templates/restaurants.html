@@ -84,14 +84,14 @@
   </div>
   <p><font size="3" face="verdana"> {{rating}} &nbsp {{reviewcount}} reviews </p><br>
 
-  {% if isopen %}
+ <!--  {% if isopen %}
     <p><font size="2" face="verdana" color="green"> OPEN NOW </font></p><br>
   {% else %}
     <p><font size="2" face="verdana" color="red"> CLOSED </font></p><br>
-  {% endif %}
+  {% endif %} -->
   <br>
 
-  {% for category in categories if category != "Restaurants" %}
+  {% for category in categories%}
     <p><font size="3" face="verdana"> {{category}} </font></p>
     {% if not loop.last %} 
       <p><font size="3" face="verdana"> , </font></p>

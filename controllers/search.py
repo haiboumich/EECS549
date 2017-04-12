@@ -24,18 +24,22 @@ search = Blueprint('search', __name__, template_folder = 'templates')
 
 @search.route('/search', methods = ['GET', 'POST'])
 def search_route():
+	username = ''
+	if 'username' in session:
+		username = session['username']
 	select = request.form.get('sort')
 	if select == "name":
 		with open('/vagrant/EECS549/business_LV.json', 'r') as inputFile:
 			json_decode = json.load(inputFile)
 			score = smp.cosine_similarity(name_mat, name_vectorizer.transform([request.form.get('data')]))
-			index = sorted(range(len(score)), key = lambda k:result[k], reverse = True)
+			index = sorted(range(len(score)), key = lambda k:score[k], reverse = True)
 			if score[index[0]] == 0:
 				outofrange = True
 				options = {
 					"outofrange": outofrange,
 					"select": select,
-					"value": request.form.get('data')
+					"value": request.form.get('data'),
+					"username": username
 				}
 				return render_template("search.html", **options)
 			outofrange = False
@@ -69,20 +73,22 @@ def search_route():
 				"rating": stars,
 				"reviewcount": review_count,
 				"city": city,
-				"state": state
+				"state": state,
+				"username": username
 			}
 			return render_template("search.html", **options)
 	elif select == "address":
 		with open('/vagrant/EECS549/business_LV.json', 'r') as inputFile:
 			json_decode = json.load(inputFile)
 			score = smp.cosine_similarity(address_mat, address_vectorizer.transform([request.form.get('data')]))
-			index = sorted(range(len(score)), key = lambda k:result[k], reverse = True)
+			index = sorted(range(len(score)), key = lambda k:score[k], reverse = True)
 			if score[index[0]] == 0:
 				outofrange = True
 				options = {
 					"outofrange": outofrange,
 					"select": select,
-					"value": request.form.get('data')
+					"value": request.form.get('data'),
+					"username": username
 				}
 				return render_template("search.html", **options)
 			outofrange = False
@@ -116,7 +122,8 @@ def search_route():
 				"rating": stars,
 				"reviewcount": review_count,
 				"city": city,
-				"state": state
+				"state": state,
+				"username": username
 			}
 			return render_template("search.html", **options)
 
@@ -134,7 +141,8 @@ def search_route():
 				options = {
 					"outofrange": outofrange,
 					"select": select,
-					"value": request.form.get('data')
+					"value": request.form.get('data'),
+					"username": username
 				}
 				return render_template("search.html", **options)
 			else:
@@ -166,7 +174,8 @@ def search_route():
 					"rating": stars,
 					"reviewcount": review_count,
 					"city": city,
-					"state": state
+					"state": state,
+					"username": username
 				}
 				return render_template("search.html", **options)
 
@@ -184,7 +193,8 @@ def search_route():
 				options = {
 					"outofrange": outofrange,
 					"select": select,
-					"value": request.form.get('data')
+					"value": request.form.get('data'),
+					"username": username
 				}
 				return render_template("search.html", **options)
 			else:
@@ -216,7 +226,8 @@ def search_route():
 					"rating": stars,
 					"reviewcount": review_count,
 					"city": city,
-					"state": state
+					"state": state,
+					"username": username
 				}
 				return render_template("search.html", **options)
 
@@ -234,7 +245,8 @@ def search_route():
 				options = {
 					"outofrange": outofrange,
 					"select": select,
-					"value": request.form.get('data')
+					"value": request.form.get('data'),
+					"username": username
 				}
 				return render_template("search.html", **options)
 			else:
@@ -266,6 +278,7 @@ def search_route():
 					"rating": stars,
 					"reviewcount": review_count,
 					"city": city,
-					"state": state
+					"state": state,
+					"username": username
 				}
 				return render_template("search.html", **options)
