@@ -79,6 +79,7 @@ def user_route():
 				review_count_rec.append(item.get('review_count'))
 				city_rec.append(item.get('city'))
 				state_rec.append(item.get('state'))
+			recommend = list(set(recommend))
 				
 
 		options = {
