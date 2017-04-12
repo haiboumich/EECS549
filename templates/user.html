@@ -47,7 +47,7 @@
 	}
 
 	button.gotoedit {
-		position:relative;
+		position:absolute;
 	    background-color: #4CAF50;
 	    color: white;
 	    padding: 14px 20px;
@@ -55,8 +55,8 @@
 	    border: none;
 	    cursor: pointer;
 	    width: 8%;
-	    float: right;
-	    top: -60px;
+	    right: 3%;
+	    top: 80px;
 	}
 
 	button:hover {
@@ -74,6 +74,36 @@
 		top: 300px;
 	}
 
+	.ratings {
+	    position: relative;
+	    vertical-align: middle;
+	    display: inline-block;
+	    color: #b1b1b1;
+	    overflow: hidden;
+	  }
+
+	  .full-stars{
+	    position: absolute;
+	    left: 0;
+	    top: 0;
+	    white-space: nowrap;
+	    overflow: hidden;
+	    color: #fde16d;
+	  }
+
+	  .empty-stars:before,
+	  .full-stars:before {
+	    content: "\2605\2605\2605\2605\2605";
+	    font-size: 14pt;
+	  }
+
+	  .empty-stars:before {
+	    -webkit-text-stroke: 1px #848484;
+	  }
+
+	  .full-stars:before {
+	    -webkit-text-stroke: 1px orange;
+	  }
 </style>
 
 {% if edit %}
@@ -112,10 +142,26 @@
 	{% endif %}
 
 {% else %}
-<p> favorate restaurants </p>
-<form action="{{url_for('user.user_edit_route')}}">
-    <button class="gotoedit" type="submit">Edit Info</button>
-</form>
+	<p><font size="4" face="verdana" color="red"> My Favorate Restaurants </font></p><br>
+
+	{% for i in range(name|length) %}
+	  	<hr>
+	  	<p>{{ i+1 }}. </p>
+	  	<a href="{{url_for('restaurants.restaurants_route', name=name[i]) }}"> {{name[i]}} </a> <br>
+		<div class="ratings">
+		    <div class="empty-stars"></div>
+		    <div class="full-stars" style="width:calc(({{rating[i]}}|int())/5*100%)"></div>
+		</div>
+		<p> &nbsp {{reviewcount[i]}} reviews </p><br>
+		{% if address[i] %}
+		    <p> {{address[i]}} </p><br>
+		{% endif %}
+		<p> {{city[i]}} {{state[i]}}, {{zipcode[i]}} </p><br>
+	 {% endfor %}
+	
+	<form action="{{url_for('user.user_edit_route')}}">
+	    <button class="gotoedit" type="submit">Edit Info</button>
+	</form>
 
 {% endif %}
 

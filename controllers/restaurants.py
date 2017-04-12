@@ -1,13 +1,15 @@
 # from sklearn.feature_extraction.text import TfidfVectorizer
 # from numpy import array, dot
 from flask import *
-from extensions import connect_to_database
+import extensions 
 from flask import url_for
 import json
+import MySQLdb
+import MySQLdb.cursors
 
 restaurants = Blueprint('restaurants', __name__, template_folder='templates')
 
-db = connect_to_database()
+db = extensions.connect_to_database()
 
 @restaurants.route('/restaurants', methods = ['GET', 'POST'])
 def restaurants_route():
@@ -42,6 +44,11 @@ def restaurants_route():
 					break
 			print('items in file:')
 			print(i)
+
+			username = ''
+			if "username" in session:
+				username = session['username']
+
 			options = {
 				"general": general,
 				"name": name,
@@ -50,26 +57,39 @@ def restaurants_route():
 				"rating": stars,
 				"reviewcount": review_count,
 				"city": city,
-				"state": state
+				"state": state,
+				"username": username
 			}
 			return render_template("restaurants.html", **options)
 	else:
 		name = request.args.get('name')
 
+		username = ''
 		favourite = False
-		if request.method == 'POST':
-			if not 'username' in session:
-				return redirect(url_for('login.login_route'))
-
+		if "username" in session:
 			username = session['username']
 			cur1 = db.cursor()
-			cur1.execute('SELECT favourites FROM UserInfo WHERE username = %s', (username, )) 
-    		results1 = cur1.fetchall()
-    		new_favourites = results1[0] + ',' + name
-    		cur2 = db.cursor()
-        	cur2.execute("UPDATE UserInfo SET favourites = %s WHERE username = %s",(new_favourites,username))
-        	favourite = True 
+			cur1.execute('SELECT restaurant FROM Favorite WHERE username = %s', (username, ))
+			results = cur1.fetchall()
 
+			for res in results:
+				if res['restaurant'] == name:
+					favourite = True
+			print(username)
+
+		if request.method == 'POST':
+			if 'username' not in session:
+				return redirect(url_for('login.login_route'))
+
+			if favourite == False:
+				cur2 = db.cursor()
+				cur2.execute("INSERT INTO Favorite (username, restaurant) VALUES (%s, %s)",(username, name))
+				favourite = True 
+			elif favourite == True:
+				cur3 = db.cursor()
+				cur3.execute("DELETE FROM Favorite WHERE restaurant=%s", (name, ))
+				favourite = False
+    		
 		with open('/vagrant/EECS549/business_LV.json', 'r') as inputFile:
 			json_decode = json.load(inputFile)
 			businessid = ''
@@ -103,8 +123,6 @@ def restaurants_route():
 					attributes = item.get('attributes')
 					categories = item.get('categories')
 					hours = item.get('hours')
-			print(name)
-			print(address)
 
 			options = {
 				"general": general,
@@ -123,7 +141,8 @@ def restaurants_route():
 				"attributes": attributes,
 				"categories": categories,
 				"hours": hours,
-				"favourite": favourite
+				"favourite": favourite,
+				"username": username
 			}
 		
 			return render_template("restaurants.html", **options)

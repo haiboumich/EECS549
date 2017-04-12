@@ -13,9 +13,46 @@ def user_route():
 	if 'username' in session:
 		username = session['username']
 
+		cur = db.cursor()
+		cur.execute('SELECT restaurant FROM Favorite WHERE username = %s', (username, )) 
+		results = cur.fetchall()
+
+		restaurants=[]
+		for res in results:
+			restaurants.append(res['restaurant'])
+
+		name = []
+		address = []
+		postal_code = []
+		stars = []
+		review_count = []
+		city = []
+		state = []
+		with open('/vagrant/EECS549/business_LV.json', 'r') as inputFile:
+			json_decode = json.load(inputFile)
+
+			for restaurant in restaurants:
+				for item in json_decode:
+					if item.get('name') == restaurant:
+						name.append(item.get('name'))
+						address.append(item.get('address'))
+						postal_code.append(item.get('postal_code'))
+						stars.append(item.get('stars'))
+						review_count.append(item.get('review_count'))
+						city.append(item.get('city'))
+						state.append(item.get('state'))
+				
+
 		options = {
 			"edit": False,
-			"username": username
+			"username": username,
+			"name": name,
+			"address": address,
+			"zipcode": postal_code,
+			"rating": stars,
+			"reviewcount": review_count,
+			"city": city,
+			"state": state
 		}
 		return render_template("user.html", **options)
 

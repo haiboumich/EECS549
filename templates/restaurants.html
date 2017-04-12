@@ -2,35 +2,35 @@
 {% block content %}
 <style>
   .ratings {
-  position: relative;
-  vertical-align: middle;
-  display: inline-block;
-  color: #b1b1b1;
-  overflow: hidden;
-}
+    position: relative;
+    vertical-align: middle;
+    display: inline-block;
+    color: #b1b1b1;
+    overflow: hidden;
+  }
 
-.full-stars{
-  position: absolute;
-  left: 0;
-  top: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  color: #fde16d;
-}
+  .full-stars{
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #fde16d;
+  }
 
-.empty-stars:before,
-.full-stars:before {
-  content: "\2605\2605\2605\2605\2605";
-  font-size: 14pt;
-}
+  .empty-stars:before,
+  .full-stars:before {
+    content: "\2605\2605\2605\2605\2605";
+    font-size: 14pt;
+  }
 
-.empty-stars:before {
-  -webkit-text-stroke: 1px #848484;
-}
+  .empty-stars:before {
+    -webkit-text-stroke: 1px #848484;
+  }
 
-.full-stars:before {
-  -webkit-text-stroke: 1px orange;
-}
+  .full-stars:before {
+    -webkit-text-stroke: 1px orange;
+  }
 </style>
 
 {% if general %}
@@ -126,12 +126,14 @@
   {% endif %}
   <br>
 
-  <form method="post">
-    <button type="submit">Favourite</button>
-  </form>
-
   {% if favourite %}
-    <p><font size="2" face="verdana"> save! </font></p><br><br>
+    <form method="post">
+      <button type="submit">Unfavorite</button>
+    </form>
+  {% else %}
+    <form method="post">
+      <button type="submit">Favorite</button>
+    </form>
   {% endif %}
 {% endif %}
 {% endblock %}
