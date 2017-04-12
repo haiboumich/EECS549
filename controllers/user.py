@@ -79,13 +79,13 @@ def user_route():
 						if item.get('name') == temp[0].get('name'):
 							exist = 1
 					if exist != 1:
-					recommend.append(temp[0])
+						recommend.append(temp[0])
 					exist = 0
 					for item in recommend:
 						if item.get('name') == temp[1].get('name'):
 							exist = 1
 					if exist != 1:
-					recommend.append(temp[1])
+						recommend.append(temp[1])
 			for item in recommend:
 				name_rec.append(item.get('name'))
 				address_rec.append(item.get('address'))
