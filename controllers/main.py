@@ -17,13 +17,7 @@ def main_route():
     #[sensitive]
     login = False
     if 'username' in session:
-        # username = session['username']
-        # cur1 = db.cursors()
-        # cur1.execute('SELECT restaurant FROM Favorite WHERE username = %s', (username, ))
-        # results = cur1.fetchall()
-
-        
-
+        username = session['username']
         login = True
         username = session['username']
         options = {

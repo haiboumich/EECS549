@@ -3,6 +3,7 @@ import MySQLdb
 import MySQLdb.cursors
 import extensions
 import config
+import json
 
 user = Blueprint('user', __name__, template_folder='templates')
 
@@ -28,6 +29,15 @@ def user_route():
 		review_count = []
 		city = []
 		state = []
+		category_list = []
+		recommend = []
+		name_rec = []
+		address_rec = []
+		postal_code_rec = []
+		stars_rec = []
+		review_count_rec = []
+		city_rec = []
+		state_rec = []
 		with open('/vagrant/EECS549/business_LV.json', 'r') as inputFile:
 			json_decode = json.load(inputFile)
 
@@ -41,6 +51,34 @@ def user_route():
 						review_count.append(item.get('review_count'))
 						city.append(item.get('city'))
 						state.append(item.get('state'))
+						categories = item.get('categories')
+						for category in categories:
+							if category not in category_list:
+								category_list.append(category)
+
+			for category in category_list:
+				if len(recommend) == 10:
+					break
+				temp = []
+				for item in json_decode:
+					if category in item.get('categories'):
+						temp.append(item)
+				temp = sorted(temp, key=lambda k: k['stars'], reverse=True)
+				if len(temp) == 0:
+					continue
+				elif len(temp) == 1:
+					recommend.append(temp[0])
+				else:
+					recommend.append(temp[0])
+					recommend.append(temp[1])
+			for item in recommend:
+				name_rec.append(item.get('name'))
+				address_rec.append(item.get('address'))
+				postal_code_rec.append(item.get('postal_code'))
+				stars_rec.append(item.get('stars'))
+				review_count_rec.append(item.get('review_count'))
+				city_rec.append(item.get('city'))
+				state_rec.append(item.get('state'))
 				
 
 		options = {
@@ -52,7 +90,14 @@ def user_route():
 			"rating": stars,
 			"reviewcount": review_count,
 			"city": city,
-			"state": state
+			"state": state,
+			"name_rec": name_rec,
+			"address_rec": address_rec,
+			"zipcode_rec": postal_code_rec,
+			"rating_rec": stars_rec,
+			"reviewcount_rec": review_count_rec,
+			"city_rec": city_rec,
+			"state_rec": state_rec,
 		}
 		return render_template("user.html", **options)
 
