@@ -1,5 +1,5 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
-from numpy import array, dot
+# from sklearn.feature_extraction.text import TfidfVectorizer
+# from numpy import array, dot
 import re
 import MySQLdb
 import MySQLdb.cursors

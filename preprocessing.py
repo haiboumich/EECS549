@@ -1,5 +1,5 @@
-# from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+# from sklearn.feature_extraction.text import CountVectorizer
 import sklearn.metrics.pairwise as smp
 from numpy import array, dot
 import json
@@ -21,24 +21,32 @@ with open('business_LV.json', 'r') as inputFile:
 		if item.get('review_count') not in reviewcount_list:
 			reviewcount_list.append(item.get('review_count'))
 
-# name_vectorizer = CountVectorizer(min_df=1)
-# name_mat = name_vectorizer.fit_transform(name_list).toarray()
-# address_vectorizer = CountVectorizer(min_df=1)
-# address_mat = address_vectorizer.fit_transform(address_list).toarray()
+name_vectorizer = TfidfVectorizer(min_df=1)
+name_mat = name_vectorizer.fit_transform(name_list).toarray()
+address_vectorizer = TfidfVectorizer(min_df=1)
+address_mat = address_vectorizer.fit_transform(address_list).toarray()
 
 # print(len(name_mat))
 # print(len(address_mat))
 # print(len(name_mat[0]))
 # print(len(address_mat[0]))
 
-# name_test = "buffet"
+name_test = "Sahara Buffet"
 
-# result = smp.cosine_similarity(name_mat, name_vectorizer.transform([name_test]))
+result = smp.cosine_similarity(name_mat, name_vectorizer.transform([name_test]))
 
 # print(len(result))
 # print(len(result[0]))
-# index = sorted(range(len(result)), key = lambda k:result[k])
+index = sorted(range(len(result)), key = lambda k:result[k], reverse = True)
+for idx in index[0:20]:
+	print(name_list[idx])
 
-print(sorted(zipcode_list))
-print(sorted(rating_list))
-print(sorted(reviewcount_list))
+
+
+
+
+
+
+# print(sorted(zipcode_list))
+# print(sorted(rating_list))
+# print(sorted(reviewcount_list))
